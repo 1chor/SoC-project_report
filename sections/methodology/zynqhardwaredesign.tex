@@ -1,15 +1,12 @@
 In contrast to the previous project \cite{oldrepo}, no hardware design was provided. Therefore, the hardware design had to be created. The reference design \cite{TRDReferenceDesign} from Xilinx served as a template. It includes all the peripherals that are needed by the Linux kernel to run on the ZCU102 Evaluation Kit.
 
-%\begin{figure}[htbp]
-%    \centering
-%    %\includegraphics[width=1\textwidth, angle=0]{images/hw_design_zynq.pdf}
-%    \includepdf[]{images/hw_design_zynq}
-%    \caption{\label{fig:hw_zynq} Hardware design for Zynq}
-%\end{figure}
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=1\textwidth]{images/hw-design-zynq.png}
+    \caption{\label{fig:hwzynq} Hardware design for Zynq}
+\end{figure}
 
-\includepdf[pages={1}]{images/hw_design_zynq.pdf}
 
-%\includegraphics[]{images/hw_design_zynq.pdf}
 
 
 Digilent provides a reference design~\cite{DigilentReferenceDesign} that
@@ -41,8 +38,8 @@ the default directory \emph{/opt}.
 	caption={Link \emph{axi\_vdma} core from \emph{ISE 14.1} to \emph{14.4}},
 	label={lst:corelink},
 	basicstyle=\small,
-	float=h,
-	floatplacement=h
+	float=htbp,
+	floatplacement=htbp
 	]
 	ln -s /opt/Xilinx/14.1/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_vdma_v5_01_a /opt/Xilinx/14.7/ISE_DS/EDK/hw/XilinxProcessorIPLib/pcores/axi_vdma_v5_01_a
 \end{lstlisting}

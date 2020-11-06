@@ -7,8 +7,8 @@ language=Bash,
 caption={Setup partial reconfiguration driver},
 label={lst:setuppr},
 basicstyle=\small,
-float=h,
-floatplacement=h
+float=htbp,
+floatplacement=htbp
 ]
 echo "++ Adding partial reconfiguration device node"
 mknod /dev/xdevcfg c 259 0
@@ -22,8 +22,8 @@ language=Bash,
 caption={Partial reconfiguration out of Android},
 label={lst:prandroid},
 basicstyle=\small,
-float=h,
-floatplacement=h
+float=htbp,
+floatplacement=htbp
 ]
 cat new_bitstream.bin > /dev/xdevcfg
 \end{lstlisting}

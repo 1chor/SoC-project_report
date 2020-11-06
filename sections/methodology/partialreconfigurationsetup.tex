@@ -9,8 +9,8 @@ The synthesis is done inside the script\\\emph{<repo>/bootimage/generate\_withou
 	caption={Synthesis for project},
 	label={lst:makenetlist},
 	basicstyle=\small,
-	float=h,
-	floatplacement=h
+	float=htbp,
+	floatplacement=htbp
 	]
 make -f system.make netlist
 # generate netlists for filter logic
@@ -24,8 +24,8 @@ language=Bash,
 caption={Run planAhead in \gls{tcl} mode},
 label={lst:runplanahead},
 basicstyle=\small,
-float=h,
-floatplacement=h,
+float=htbp,
+floatplacement=htbp,
 breaklines=true
 ]
 planAhead -mode tcl -source planAhead.tcl
@@ -44,8 +44,8 @@ language=Bash,
 caption={Convert bitstreams into binary files},
 label={lst:convertbit},
 basicstyle=\small,
-float=h,
-floatplacement=h
+float=htbp,
+floatplacement=htbp
 ]
 promgen -b -w -p bin -data_width 32 -u 0 ./planAhead/partial_reconfiguration/partial_reconfiguration.runs/config_1/config_1_simple_filter_0_simple_filter_0_USER_LOGIC_I_filter_logic_0_red_filter_partial.bit -o ./planAhead/generated_Bitstreams/red_filter.bin
 promgen -b -w -p bin -data_width 32 -u 0 ./planAhead/partial_reconfiguration/partial_reconfiguration.runs/config_2/config_2_simple_filter_0_simple_filter_0_USER_LOGIC_I_filter_logic_0_green_filter_partial.bit -o ./planAhead/generated_Bitstreams/green_filter.bin

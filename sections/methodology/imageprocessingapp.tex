@@ -120,7 +120,7 @@ Insomnia, a free open source REST client available for Mac,Windows and Linux, wa
   \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
   
 \subsubsubsection{Get all information for repository <index>:}
-\begin{table}[h]
+\begin{table}[htbp]
     \begin{tabular}[h]{llllll}
     URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
     /api/<index> & index=[string] & n/a    & GET   & 200              & 404            \\ 
@@ -130,7 +130,7 @@ Insomnia, a free open source REST client available for Mac,Windows and Linux, wa
 
 
 \subsubsubsection{Create repository <index>:}
-\begin{table}[h]
+\begin{table}[htbp]
     \begin{tabular}[h]{llllll}
     URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
     /api/<index> & index=[string] & JSON    & POST   & 201              & 400            \\ 
@@ -152,7 +152,7 @@ JSON:
 \end{verbatim}
 
 \subsubsubsection{Update repository <index> or create it if not existing:}
-\begin{table}[h]
+\begin{table}[htbp]
     \begin{tabular}[h]{llllll}
     URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
     /api/<index> & index=[string] & JSON  & PUT    & 200              & 201            \\ 

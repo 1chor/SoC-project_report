@@ -34,8 +34,8 @@ needs to be adapted accordingly (\Cref{lst:blake2,lst:blake2bwrapper}):
 	caption={\gls{pao} file of the blake2b core},
 	label={lst:mpdblake},
 	basicstyle=\small,
-	float=h,
-	floatplacement=h
+	float=htbp,
+	floatplacement=htbp
 	]
 lib proc_common_v3_00_a  all 
 lib axi_lite_ipif_v1_01_a  all 
@@ -74,8 +74,8 @@ This is done with the following lines:
 	caption={Configure output port as interrupt},
 	label={lst:interruptmpd},
 	basicstyle=\small,
-	float=h,
-	floatplacement=h
+	float=htbp,
+	floatplacement=htbp
 	]
 PARAMETER C_INTERRUPT_PRESENT = 1, DT = INTEGER, RANGE = (0,1)
 PORT Interrupt = "", DIR = O, SIGIS = INTERRUPT, SENSITIVITY = EDGE_RISING, INTERRUPT_PRIORITY = MEDIUM, ISVALID = (C_INTERRUPT_PRESENT == 1)
