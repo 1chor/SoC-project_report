@@ -1,7 +1,7 @@
 The Image processing app splits into two parts. An external server which provides the infrastructure to store and distribute bitstreams and 
 the android app (client) which interacts with the server and the hardware on the ZedBoard. 
 
-\subsubsection{Client application}
+\subsubsubsection{Client application}
 
 The client is a native android application written in Android Studio version 3.2.1 for Android API 10 (Gingerbread 2.3.3).
 Unfortunately todays Android SDK (API 28) does not support Gingerbread anymore, version 25 was the last SDK that officially supports Gingerbread. To compile for Gingerbread set compileSdkVersion to 25 with the targetSdk set to 10 as seen in~\Cref{lst:appbuild}.
@@ -92,7 +92,7 @@ ALPHA | RED |GREEN | BLUE (8bit|8bit|8bit|8bit) e.g full opaque red would be (he
 The path to this file will be written to the device driver, soon after the filtered data will be read back into the UI from the same file.
 
 
-\subsubsection{Server}
+\subsubsubsection{Server}
 
 A tiny webserver with a REST API (Representational State Transfer), 
 written with python 3.7 using Flask and its extension FlaskRESTful, therefore fully WSGI compliant
@@ -104,7 +104,7 @@ Flask run -h *your ip* -p 5000
 \end{verbatim}
 Open http://*your ip*:5000 to see if the server is reachable
 
-\subsubsection{Server API}
+\subsubsubsection{Server API}
 
 Insomnia, a free open source REST client available for Mac,Windows and Linux, was used for API testing and server communication.
 
@@ -119,7 +119,7 @@ Insomnia, a free open source REST client available for Mac,Windows and Linux, wa
 \newcommand{\specialcell}[2][c]{%
   \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
   
-\subsubsubsection{Get all information for repository <index>:}
+\textbf{Get all information for repository <index>:}
 \begin{table}[htbp]
     \begin{tabular}[h]{llllll}
     URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
@@ -129,7 +129,7 @@ Insomnia, a free open source REST client available for Mac,Windows and Linux, wa
 
 
 
-\subsubsubsection{Create repository <index>:}
+\textbf{Create repository <index>:}
 \begin{table}[htbp]
     \begin{tabular}[h]{llllll}
     URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
@@ -151,7 +151,7 @@ JSON:
 }	    
 \end{verbatim}
 
-\subsubsubsection{Update repository <index> or create it if not existing:}
+\textbf{Update repository <index> or create it if not existing:}
 \begin{table}[htbp]
     \begin{tabular}[h]{llllll}
     URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
@@ -175,13 +175,13 @@ JSON:
 }	
 \end{verbatim}
 
-\subsubsubsection{Delete repository <index>:}
+\textbf{Delete repository <index>:}
 \begin{tabular}[h]{llllll}
 URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
 /api/<index> & index=[string] & n/a        & DELETE & 200              & 404            \\ 
 \end{tabular}
 
-\subsubsubsection{Download file <filename>}
+\textbf{Download file <filename>}
 \begin{tabular}[h]{llllll}
 URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
 \specialcell{/api/download/\\<path:filename>} &  filename=[string] & n/a        & GET    & 200              & 404            \\ 

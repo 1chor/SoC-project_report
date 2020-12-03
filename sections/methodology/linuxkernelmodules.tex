@@ -1,5 +1,5 @@
 
-\textbf{Blake2b Driver:}\\
+\subsubsubsection{Blake2b Driver}
 The blake2b device driver sits between the userspace application that desires to
 compute the hash of a file and the \gls{pl} implementation of Blake2B.\\
 The communication with the \gls{pl} was discussed in detail in
@@ -18,7 +18,7 @@ This function will impede the compiler to rearrange the calls during
 optimization and therefore guarantees that the reads and writes are executed in
 specified order.
 \\\\
-\textbf{Image Filter Driver:}\\
+\subsubsubsection{Image Filter Driver}
 The Image Filter device driver writes raw \gls{rgb} data that needs to be
 processed to the write register address of the programmed filter logic.
 The processing of the value is then triggered automatically.
