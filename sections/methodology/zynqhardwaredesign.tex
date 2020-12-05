@@ -9,7 +9,7 @@ In contrast to the previous project \cite{oldrepo}, no hardware design was provi
 This design is used to build the boot-image flashed onto the SD card that comes with the ZCU102 Evaluation Kit. It contains a Vivado block design project that can be opened and built using
 the Xilinx Vivado Design Suite 2018.1.
 
-This design can then be adapted to include our logic needed for the hardware accelerators. The Vivado IP packager flow described in \cite{UG1118} was used to include the custom hardware logic. Since the hardware accelerators were already created with the \gls{xps} tool included in the Xilinx ISE Design Suite, these hardware components only had to be repackaged as an \gls{ip} core for Vivado. The important thing is that you must complete these steps before enabling partial reconfiguration. \note{Link to PR enable} Otherwise the IP core has to be packed in a new temporary project.
+This design can then be adapted to include our logic needed for the hardware accelerators. The Vivado IP packager flow described in \cite{UG1118} was used to include the custom hardware logic. Since the hardware accelerators were already created with the \gls{xps} tool included in the Xilinx ISE Design Suite, these hardware components only had to be repackaged as an \gls{ip} core for Vivado. The important thing is that you must complete these steps before enabling partial reconfiguration (see \cref{sssec:partialreconfigurationsetup}).
 The basic steps to do this are:
 \begin{itemize}
 	\item Create new peripheral by choosing `Tools', `Create and Package New IP\ldots'

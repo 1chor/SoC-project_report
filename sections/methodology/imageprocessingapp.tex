@@ -1,49 +1,9 @@
-The Image processing app splits into two parts. An external server which provides the infrastructure to store and distribute bitstreams and 
-the android app (client) which interacts with the server and the hardware on the ZedBoard. 
+The Image processing app splits into three parts. An external server that provides the infrastructure for storing and distributing bitstreams, the Android app (client) that interacts with the server and a root client script that forwards the actions from the app to the hardware components. 
 
-\subsubsubsection{Client application}
+\subsubsubsection{Client application}\label{ssssec:clientapp}
+As a newer Android version is used in this project, the client application has also been updated to this Android version.
 
-The client is a native android application written in Android Studio version 3.2.1 for Android API 10 (Gingerbread 2.3.3).
-Unfortunately todays Android SDK (API 28) does not support Gingerbread anymore, version 25 was the last SDK that officially supports Gingerbread. To compile for Gingerbread set compileSdkVersion to 25 with the targetSdk set to 10 as seen in~\Cref{lst:appbuild}.
-\begin{lstlisting}[
-	language=Bash,
-	caption={App build setup},
-	label={lst:appbuild},
-	basicstyle=\small
-	]
-apply plugin: 'com.android.application'
-android {
-    compileSdkVersion 25
-    defaultConfig {
-        applicationId "com.lab.soc.client"
-        minSdkVersion 10
-        targetSdkVersion 10
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-    }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 
-            'proguard-rules.pro'
-        }
-    }
-    buildToolsVersion '28.0.3'
-}
-
-dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'com.android.support:appcompat-v7:25.4.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
-    implementation 'com.android.support:support-v4:25.4.0'
-    testImplementation 'junit:junit:4.12'
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
-}    
-\end{lstlisting}
-This way it is possible to use Google's support libraries, which deliver
-backward compatibility for newer Android classes (e.g fragments) and allows to run the app on all Android versions from Gingerbread to Pie without version specific modifications. Whenever possible Androids own APIs has been used, if not available on Gingerbread they were replaced with own implementations.\newline
+The client is a native Android application written in Android Studio version $4.0.1$ for Android API $26$ (Oreo $8$).
 
 The architecture is following the single responsibility principle, separating the concerns into several classes:
 
@@ -57,8 +17,7 @@ The architecture is following the single responsibility principle, separating th
     \item Repository        - Data format
 \end{itemize}
 
-
-The Network Manager spawns a new thread and opens a connection to the server. Then requests new information using the REST API (see server section). The received information is packed inside a JSON object (JavaScript Object Notation) and forwarded to the MsgProcessor. Where they are unpacked, compared and saved.
+The Network Manager spawns a new thread and opens a connection to the server. Then requests new information using the \gls{rest} API (see section \ref{ssssec:server}). The received information is packed inside a JSON object (JavaScript Object Notation) and forwarded to the MsgProcessor. Where they are unpacked, compared and saved.
 
 Example JSON object:
 \begin{verbatim}
@@ -76,69 +35,149 @@ Example JSON object:
 }  
 \end{verbatim}
 
-
-
-If there is a new version available, the Network Manager will download the new bitstream from the sever using the REST API (see server section). The Fabric Manager will then calculate the hash from the bitstream file on the programmable logic. If they match, the PL fabric will be reconfigured with the downloaded bitstream. In a real world scenario, the whole process would run in the background without user interference. For demonstration purposes a simple user interface was implemented to trigger the download and apply filters on a test picture.
+If there is a new version available, the Network Manager will download the new bitstream from the sever using the \gls{rest} API (see section \ref{ssssec:server}). The Fabric Manager will then calculate the hash from the bitstream file on the programmable logic. If they match, the PL fabric will be reconfigured with the downloaded bitstream. In a real world scenario, the whole process would run in the background without user interference. For demonstration purposes, a simple user interface was implemented to trigger the download and apply filters to a test picture, as can be seen in \cref{fig:gui}.
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=1\textwidth]{sections/methodology/clientdownload.png}
-\caption{\label{fig:gui} user interface}
+    \centering
+    \includegraphics[width=1\textwidth]{images/client-screen.png}
+    \caption{\label{fig:gui} App user interface}
 \end{figure}
 
-To apply filters the app has to pre process the image for the device driver to the following specification:
-32 bit integer
-ALPHA | RED |GREEN | BLUE (8bit|8bit|8bit|8bit) e.g full opaque red would be (hex notation) FF FF 00 00. Every pixel will be read out and saved together to a new binary file. 
-The path to this file will be written to the device driver, soon after the filtered data will be read back into the UI from the same file.
+To apply filters the app has to preprocess the image for the device driver to the following specification:
+$32$ bit integer
+ALPHA | RED |GREEN | BLUE ($8$bit|$8$bit|$8$bit|$8$bit) e.g full opaque red would be (hex notation) $FF FF 00 00$. Every pixel will be read out and saved together to a new binary file. 
+The path to this file will be written to the device driver, soon after the filtered data will be read back into the UI from a new created file.
 
+\subsubsubsection{Root client script}\label{ssssec:clientscript}
+The main challenge of the Android application was communication with the \gls{fpga} hardware in the \gls{pl}. This problem could not be solved in the previous project \cite{oldrepo}. 
+In order to be able to access the FPGA hardware from the application, the app must be signed with a some platform keys. However, there was no access to these keys. The installation of the app as a system app was insufficient or also required some keys.
 
-\subsubsubsection{Server}
+A workaround was found. Since the application has access to the external storage, which is a specific folder on the SD card (\emph{/storage/emulated/0/SoC}), the commands to be transmitted to the kernel modules have been written to a text file.
 
-A tiny webserver with a REST API (Representational State Transfer), 
-written with python 3.7 using Flask and its extension FlaskRESTful, therefore fully WSGI compliant
-(Webserver Gateway Interface). However Flask internal development server is used for the demonstration and for simplicity.
+Then a script was written that forwards the commands to the desired kernel modules called \emph{Root_Client.sh}. This script was started in the startup script and has system rights. This means that the script has access to the generated text files from the app, but also to the kernel modules.
 
-To start the server, open a terminal in the server directory. Type in following command:
-\begin{verbatim}
-Flask run -h *your ip* -p 5000    
-\end{verbatim}
-Open http://*your ip*:5000 to see if the server is reachable
+The script is waiting for three different actions:
+\begin{itemize}
+    \item Control for the filter logic -- \emph{filter.txt}
+    \item Control for blake2b hash function -- \emph{blake2b.txt}
+    \item Control for partial reconfiguration -- \emph{partial.txt}
+\end{itemize}
 
-\subsubsubsection{Server API}
+\textbf{Control for the filter logic:}\\
+When the application performs the action to use the filter logic, a text file is created that contains the path to the bitmap file generated from the app.
+The script will now check whether this text file is available or not. If the file exists, the content of the file is passed to the \emph{simple_filters} kernel module (see \cref{sssec:imageprocessingmodule}) with the \emph{echo} command. When the kernel module has finished, the result is stored in a new bitmap file.
+The Android app checks whether this new bitmap file exists and continues with its further processing.
+Finally, the files that are no longer needed are deleted so that no false triggering occurs.
+\medbreak
 
-Insomnia, a free open source REST client available for Mac,Windows and Linux, was used for API testing and server communication.
+\textbf{Control for blake2b hash function:}\\
+When the app has downloaded a new bitstream update, the hash function need to be calculated. Therefore a text file is created that contains the path to the new bitstream file. Before the bitstream can be passed to the kernel module, the command in \cref{lst:catbitstream} must be executed. This command opens the bitstream file and send it to a null device. If this step is not followed, the actual blake2b hash function will fail. This malfunction was only ascertained with binary files. 
+\begin{lstlisting}[
+	language=Bash,
+	caption={Prepare bitstream for blake2b},
+	label={lst:catbitstream},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+cat "$( < blake2b.txt )" > /dev/null
+\end{lstlisting}
+
+After the malfunction has been eliminated, the bitstream is passed to the \emph{blake2b} kernel module (see \cref{sssec:blake2bmodule}). The result is read from the kernel module and saved in a new text file. 
+The application waits again for this file and continues its further processing. 
+The files that are no longer required are deleted.
+\medbreak
+
+\textbf{Control for partial reconfiguration:}\\
+If the hash from the downloaded bitstream is correct, the partial reconfiguration must be performed. The app creates a text file that contains the path to the new bitstream file. Again the commands in \cref{lst:catbitstreampr} must be executed before the partial reconfiguration can be performed. 
+\begin{lstlisting}[
+	language=Bash,
+	caption={Prepare bitstream for partial reconfiguration},
+	label={lst:catbitstreampr},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+# read path of bitstream file 
+bitpath="$( < partial.txt )"
+echo $bitpath > /dev/null
+
+# read bitstream filename
+bit=${bitpath##*/}
+echo $bit > /dev/null
+\end{lstlisting}
+
+After the preparation, the bitstream is sent to the \gls{fpga} manager. This action is described in detail in \cref{sssec:dynamicpartialreconfiguration}.
+
+\subsubsubsection{Server}\label{ssssec:server}
+A tiny web server with a \gls{rest} API, 
+written with python $3.7$ using Flask and its extension FlaskRESTful, therefore fully \gls{wsgi} compliant. However, Flask internal development server is used for the demonstration and for simplicity.
+
+In order to use the server, the following packages available from Ubuntu repositories must be installed: 
+\begin{lstlisting}[
+	language=Bash,
+	%caption={Install packages for the server},
+	%label={lst:installserverpkg},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+sudo apt install python3 python3-pip python3-flask
+pip install flask-restful 
+\end{lstlisting}
+
+Run the script at \emph{<repo>/server/run\_server.sh} to start the server. The host's IP address must be entered. The script shows all available IP addresses
+Open http://*your ip*:5000 to see if the server is reachable.
+
+There are also some preconfigured repositories implemented in a file at \emph{<repo>/server/ressources/repository.py}.
+All files contained in a repository are located in the server' download folder. When a download is in progress, the server sends the file from this folder.
+
+\subsubsubsection{Server API}\label{ssssec:serverapi}
+Insomnia, a free open source \gls{rest} client available for Mac, Windows and Linux, was used for API testing and server communication (see \cref{fig:insomnia}).
 
 \begin{figure}[htbp]
-\centering
-\includegraphics[width=1\textwidth]{sections/methodology/insomnia.png}
-\caption{\label{fig:insomnia} Insomnia}
+    \centering
+    \includegraphics[width=1\textwidth]{images/insomnia.png}
+    \caption{\label{fig:insomnia} Insomnia REST client}
 \end{figure}
 
+All commands of the server API are explained below.
+\medbreak
 
-
+%define command for table
 \newcommand{\specialcell}[2][c]{%
   \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
-  
-\textbf{Get all information for repository <index>:}
+
+\textbf{Get all information for repository <index>:}\\
+This command returns all information of a requested repository. If the command is successful, the response code is $200$ otherwise it is $404$.
+
 \begin{table}[htbp]
-    \begin{tabular}[h]{llllll}
-    URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
-    /api/<index> & index=[string] & n/a    & GET   & 200              & 404            \\ 
-    \end{tabular}
+    \centering
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{cccccc}
+            \multirow{2}{*}{\textbf{URL}} & \textbf{URL} & \textbf{DATA} & \multirow{2}{*}{\textbf{METHOD}} & SUCCESS & ERROR \\
+             & PARAM & PARAM &  & RESPONSE & RESPONSE \\ \hline
+            /api/<index> & index=[string] & n/a & GET & 200 & 404
+        \end{tabular}%
+    }
 \end{table}
 
+\textbf{Create repository <index>:}\\
+This command creates a new repository with the passed JSON parameters. If the command is successful, the response code is $201$ otherwise it is $400$.
 
-
-\textbf{Create repository <index>:}
 \begin{table}[htbp]
-    \begin{tabular}[h]{llllll}
-    URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
-    /api/<index> & index=[string] & JSON    & POST   & 201              & 400            \\ 
-    \end{tabular}
+    \centering
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{cccccc}
+            \multirow{2}{*}{\textbf{URL}} & \textbf{URL} & \textbf{DATA} & \multirow{2}{*}{\textbf{METHOD}} & SUCCESS & ERROR \\
+             & PARAM & PARAM &  & RESPONSE & RESPONSE \\ \hline
+            /api/<index> & index=[string] & JSON & POST & 201 & 400
+        \end{tabular}%
+    }
 \end{table}
 
-JSON:
 \begin{verbatim}
+JSON:
 {
     "Index": "SOC-LAB-IOT",
     "Title": "IOT Image Processing",
@@ -151,16 +190,22 @@ JSON:
 }	    
 \end{verbatim}
 
-\textbf{Update repository <index> or create it if not existing:}
+\textbf{Update repository <index> or create it if not existing:}\\
+This command appends the passed JSON parameters to a repository or creates a new one if it does not exist. If the command changed the parameters of an existing repository, the response code is $200$, but if a new one was created, the response code is $201$.
+
 \begin{table}[htbp]
-    \begin{tabular}[h]{llllll}
-    URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
-    /api/<index> & index=[string] & JSON  & PUT    & 200              & 201            \\ 
-    \end{tabular}
+    \centering
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{cccccc}
+            \multirow{2}{*}{\textbf{URL}} & \textbf{URL} & \textbf{DATA} & \multirow{2}{*}{\textbf{METHOD}} & SUCCESS & ERROR \\
+             & PARAM & PARAM &  & RESPONSE & RESPONSE \\ \hline
+            /api/<index> & index=[string] & JSON & PUT & 200 & 201
+        \end{tabular}%
+    }
 \end{table}
 
-JSON:
 \begin{verbatim}
+JSON:
 {
     "Index": "SOC-LAB-IOT",
     "Title": "IOT Image Processing",
@@ -175,14 +220,31 @@ JSON:
 }	
 \end{verbatim}
 
-\textbf{Delete repository <index>:}
-\begin{tabular}[h]{llllll}
-URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
-/api/<index> & index=[string] & n/a        & DELETE & 200              & 404            \\ 
-\end{tabular}
+\textbf{Delete repository <index>:}\\
+This command deletes the specified repository. If the command is successful, the response code is $200$ otherwise it is $404$.
 
-\textbf{Download file <filename>}
-\begin{tabular}[h]{llllll}
-URL          & \specialcell{URL\\PARAM}     & \specialcell{DATA\\PARAM}  & METHOD &  \specialcell{SUCCESS\\RESPONSE} & \specialcell{ERROR\\RESPONSE} \\ \hline
-\specialcell{/api/download/\\<path:filename>} &  filename=[string] & n/a        & GET    & 200              & 404            \\ 
-\end{tabular}
+\begin{table}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+        \begin{tabular}{cccccc}
+            \multirow{2}{*}{\textbf{URL}} & \textbf{URL} & \textbf{DATA} & \multirow{2}{*}{\textbf{METHOD}} & SUCCESS & ERROR \\
+             & PARAM & PARAM &  & RESPONSE & RESPONSE \\ \hline
+            /api/<index> & index=[string] & n/a & DELETE & 200 & 404
+        \end{tabular}%
+    }
+\end{table}
+
+\textbf{Download file <filename>:}\\
+This command downloads the file contained in the specified repository. If the download is successful, the response code is $200$ otherwise it is $404$.
+
+\begin{table}[htbp]
+    \centering
+    \resizebox{\textwidth}{!}{%
+    \begin{tabular}{cccccc}
+        \multirow{2}{*}{\textbf{URL}} & \textbf{URL} & \textbf{DATA} & \multirow{2}{*}{\textbf{METHOD}} & SUCCESS & ERROR \\
+         & PARAM & PARAM &  & RESPONSE & RESPONSE \\ \hline
+        /api/download/ & \multirow{2}{*}{filename=[string]} & \multirow{2}{*}{n/a} & \multirow{2}{*}{GET} & \multirow{2}{*}{200} & \multirow{2}{*}{404} \\
+        \multicolumn{1}{l}{<path:filename>} &  &  &  &  & 
+    \end{tabular}%
+    }
+\end{table}

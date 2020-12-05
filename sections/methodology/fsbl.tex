@@ -1,0 +1,22 @@
+After the bitstreams have been generated, the hardware design is exported to the Vivado SDK, which is included in the Vivado Design Suite.
+
+Using SDK, a new \gls{fsbl} application project is created. This is done using an underlying \gls{tcl} script. To finally generate the \gls{fsbl}, proceed as follows:
+\begin{lstlisting}[
+	language=Bash,
+	%caption={Building the FSBL},
+	%label={lst:makefsbl},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+cd hardware_design
+
+# create FSBL project
+make -f scripts/Makefile fsbl
+
+# If the project has already been created, run ...
+cd soc_project.sdk/fsbl/Release
+make
+\end{lstlisting}
+
+The compiled \gls{fsbl} will be available at \emph{soc_project.sdk/fsbl/Release/fsbl.elf}.

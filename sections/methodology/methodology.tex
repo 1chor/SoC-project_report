@@ -23,8 +23,8 @@ To interact with the ZCU102 Evaluation Kit, multiple interfaces are used:
 	\item Graphical output is available over DisplayPort
 	\item Peripherals can be attached via \gls{usb}
 \end{itemize}
-To achieve the best android experience, a touchscreen is attached via \gls{hdmi}
-(for graphics) and \gls{usb} (for the \gls{hid}).
+
+To achieve the best android experience, a touchscreen is attached via \gls{hdmi} (for graphics) and \gls{usb} (for the \gls{hid}).
 \note{change Graphical input for touchscreen}
 
 To automate the extensive build process, two scripts are available in the git
@@ -61,8 +61,8 @@ Both scripts rely on makefiles of the underlying components they are building. T
 \subsubsection{First Stage Boot Loader}\label{sssec:fsbl}
 \input{sections/methodology/fsbl}
 %
-\subsubsection{Platform Management Unit Firmware}\label{sssec:pmuf}
-\input{sections/methodology/pmuf}
+\subsubsection{Platform Management Unit Firmware}\label{sssec:pmufw}
+\input{sections/methodology/pmufw}
 %
 \subsubsection{Devicetree}\label{sssec:devicetree}
 \input{sections/methodology/devicetree}
@@ -78,10 +78,10 @@ Both scripts rely on makefiles of the underlying components they are building. T
 %
 \subsubsection{Image Processing App}\label{sssec:imageprocessingapp}
 \input{sections/methodology/imageprocessingapp}
+%
+\subsubsection{Dynamic Partial Reconfiguration in Android}\label{sssec:dynamicpartialreconfiguration}
+\input{sections/methodology/partialreconfiguration}
 
 
 \subsection{Setup}\label{ssec:setup}
 \input{sections/methodology/setup}
-%
-\subsubsection{Dynamic Partial Reconfiguration in Android}\label{sssec:dynamicpartialreconfiguration}
-\input{sections/methodology/partialreconfiguration}

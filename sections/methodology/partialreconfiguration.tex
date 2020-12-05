@@ -1,31 +1,24 @@
-The branch of the Linux kernel provided by Digilent \cite{DigilentLinux} already included a device driver for partial reconfiguration.
+The branch of the Linux kernel provided by Mentor Embedded \cite{linuxkernel} already included a device driver for partial reconfiguration.
 
-Before the driver can be used, it must be set up during the boot routine. \Cref{lst:setuppr} shows how to set up the device driver. In \Cref{lst:ispart} the flag for partial reconfiguration is set.
-
-\begin{lstlisting}[
-language=Bash,
-caption={Setup partial reconfiguration driver},
-label={lst:setuppr},
-basicstyle=\small,
-float=htbp,
-floatplacement=htbp
-]
-echo "++ Adding partial reconfiguration device node"
-mknod /dev/xdevcfg c 259 0
-echo "1" > /sys/devices/axi.0/f8007000.devcfg/is_partial_bitstream(*@\label{lst:ispart}@*)
-\end{lstlisting}
+A folder must be created before the driver can be used. This adaptation is described in \cref{sssec:androidonzcu102}. 
 
 From Android, \gls{dpr} can be easily done by sending the partial bitstream to the device driver. \Cref{lst:prandroid} shows how this is implemented.
+In \cref{lst:flag}, the flag for partial reconfiguration is set so that the \gls{fpga} manager knows the incoming bitstream is a partial one. \Cref{lst:copybit} copies the bitstream from the application folder to a temporary folder. The \gls{fpga} manager can only process bitstreams contained in this directory. Finally, in \cref{lst:prbit}, the partial reconfiguration is performed by passing the bitstream to the \gls{fpga} manager.
 
 \begin{lstlisting}[
-language=Bash,
-caption={Partial reconfiguration out of Android},
-label={lst:prandroid},
-basicstyle=\small,
-float=htbp,
-floatplacement=htbp
-]
-cat new_bitstream.bin > /dev/xdevcfg
+    language=Bash,
+    caption={Partial reconfiguration controlled by Android},
+    label={lst:prandroid},
+    basicstyle=\small,
+    float=htbp,
+    floatplacement=htbp
+    ]
+# set flags for partial reconfiguration
+echo 1 > /sys/class/fpga_manager/fpga0/flags  (*@\label{lst:flag}@*)
+
+# load partial bitstream
+cp <path>/bitstream.bin /lib/firmware  (*@\label{lst:copybit}@*)
+echo bitstream.bin > /sys/class/fpga_manager/fpga0/firmware  (*@\label{lst:prbit}@*)
 \end{lstlisting}
 
 After the reconfiguration is completed, the new logic part can be used.

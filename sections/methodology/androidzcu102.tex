@@ -1,33 +1,16 @@
-Android Gingerbread on ZedBoard was officially supported by Xilinx partner
-company Iveia, unfortunately it is not any more and they do not longer provide
-android sources. Thankfully, a github user made the Iveia sources available by
-uploading them~\cite{androidsource}.
+Since the previous project \cite{oldrepo} had some complications with the low Android $2.3$ Gingerbread version, a newer version was used. Mentor Embedded provides the source files for Android $8$ Oreo for Xilinx Zynq UltraScale+ MPSoC \cite{androidsource}. 
 
-Android Gingerbread requires a very delicate build environment:
+The Android Oreo setup requires the following build environment:
 \begin{itemize}
-	\item Ubuntu 12.04 LTS host operating system
-	\item make version 3.81
-	\item gcc, g++ and cpp version 4.4
-	\item Java JDK 1.6 from Oracle (the OpenJDK version is not suitable)
+	\item Ubuntu 18.04 LTS host operating system (tested)
+	\item OpenJDK 8
 	\item The following packages available from the Ubuntu repositories:
-		apt-get install libgtk2.0-0:i386 libxtst6:i386 gtk2-engines-murrine:i386
-		lib32stdc++6 libxt6:i386 libdbus-glib-1-2:i386 libasound2:i386 fakeroot
-		build-essential crash kexec-tools makedumpfile kernel-wedge git-core
-		libncurses5 libncurses5-dev libelf-dev asciidoc binutils-dev curl
-		gcc-4.4 g++-4.4 cpp-4.4 gcc-4.4-multilib g++-4.4-multilib cpp-4.4
-		ia32-libs openjdk-6-jdk:i386 vim gnupg flex bison gperf build-essential
-		zip curl libc6-dev x11proto-core-dev libx11-dev:i386
-		libreadline6-dev:i386 libgl1-mesa-glx:i386 libgl1-mesa-dev g++-multilib
-		mingw32 tofrodos python-markdown libxml2-utils xsltproc zlib1g-dev:i386
-		gnupg flex bison gperf build-essential zip curl libc6-dev
-		lib32ncurses5-dev x11proto-core-dev libx11-dev:i386
-		libreadline6-dev:i386 libgl1-mesa-glx:i386 libgl1-mesa-dev
-		g++-multilib mingw32 tofrodos python-markdown libxml2-utils xsltproc
-		zlib1g-dev:i386 genext2fs lib32z1-dev
+		sudo apt-get install git-core gnupg flex bison build-essential zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z1-dev libgl1-mesa-dev libxml2-utils xsltproc unzip fontconfig dosfstools e2fsprogs parted
 	\item The repo tool (a wrapper around git), available from\\
-		\url{http://commondatastorage.googleapis.com/git-repo-downloads/repo}
+		\url{https://storage.googleapis.com/git-repo-downloads/repo}
 \end{itemize}
-The build process can be seen in \Cref{lst:androidbuild}.
+
+The build process can be seen in \cref{lst:androidbuild}.
 \begin{lstlisting}[
 	language=Bash,
 	caption={Retrieve and build android},
@@ -36,32 +19,44 @@ The build process can be seen in \Cref{lst:androidbuild}.
 	float=htbp,
 	floatplacement=htbp
 	]
-repo init -u git://github.com/aimeemikaelac/xilinx-android-manifest.git -b android-zynq-1.0(*@\label{lst:androidret1}@*)
-repo sync(*@\label{lst:androidret2}@*)
+# fetching android source
+repo init -u git://github.com/MentorEmbedded/mpsoc-manifest.git -b zynqmp-android_8 -m release_android-8_xilinx-v2018.1.xml (*@\label{lst:androidret1}@*)
+repo sync -c (*@\label{lst:androidret2}@*)
 
-. build/envsetup.sh(*@\label{lst:androidenv1}@*)
-lunch generic-eng(*@\label{lst:androidenv2}@*)
+# fetching MALI 400 userspace binaries
+mkdir -p ../android/vendor/xilinx/zynqmp/proprietary (*@\label{lst:mali1}@*)
+cp -r mali/* ../android/vendor/xilinx/zynqmp/proprietary (*@\label{lst:mali2}@*)
 
+# updating selinux policy files
+cp build-files/sepolicy/sv_startup.te android/device/xilinx/zcu102/sepolicy/ (*@\label{lst:sepolicy1}@*)
+cp build-files/sepolicy/file_contexts android/device/xilinx/zcu102/sepolicy/ (*@\label{lst:sepolicy2}@*)
 
-make -j32(*@\label{lst:androidmake1}@*)
-make -f Makefile.zynq(*@\label{lst:androidmake2}@*)
+# prepare client app
+mkdir packages/apps/SoC (*@\label{lst:app1}@*)
+cp ../client/app/build/outputs/apk/debug/app-debug.apk packages/apps/SoC/SoC_Client.apk
+cp ../build-files/app/Android.mk packages/apps/SoC/
+cp ../build-files/app/core.mk build/target/product/ (*@\label{lst:app2}@*)
 
-mkdir -p root(*@\label{lst:touchcopy1}@*)
-sudo mount root.img -o loop,rw,sync root
-sudo mkdir -p root/system/usr/idc/
-sudo cp <repo>linux-files/touchscreen_config.idc root/system/usr/idc/Vendor_222a_Product_0001.idc
-#sudo cp <repo>/linux-files/touchscreen_config.idc "root/system/usr/idc/ILITEK ILITEK-TP.idc"
-sudo chmod 664 root/system/usr/idc/*.idc
-sleep 1
-sudo umount root
-sleep 1
-rmdir root(*@\label{lst:touchcopy2}@*)
+# making android
+source build/envsetup.sh (*@\label{lst:androidenv1}@*)
+lunch zcu102-eng (*@\label{lst:androidenv2}@*)
+make -j (*@\label{lst:androidmake}@*)
+cp out/target/product/zcu102/ramdisk.img ../build-files/ramdisk (*@\label{lst:ramdisk1}@*)
+
+# modify ramdisk.img
+./modify_ramdisk.sh extract (*@\label{lst:ramdiskextract}@*)
+cp init.rc ramdisk/ (*@\label{lst:ramdiskstartup}@*)
+mkdir -p ramdisk/lib/firmware (*@\label{lst:ramdiskpr}@*)
+.modify_ramdisk.sh wrap (*@\label{lst:ramdisk2}@*)
+cp uramdisk.img ../../bootimage
 \end{lstlisting}
-In \Crefrange{lst:androidret1}{lst:androidret2} the source code is retrieved.
-\Crefrange{lst:androidenv1}{lst:androidenv2} setup the environment and
-\Crefrange{lst:androidmake1}{lst:androidmake2} builds the system.
-The result is a bootable image called `root.img'.
 
-This image then needs to be mounted, so we can copy the touchscreen
-configuration file to it. This is done in
-\Crefrange{lst:touchcopy1}{lst:touchcopy2}.
+In \crefrange{lst:androidret1}{lst:androidret2} the android source code is fetched.
+\Crefrange{lst:mali1}{lst:mali2} loads the MALI 400 userspace binaries provided by Xilinx \cite{mali400}. 
+In order to automatically load the kernel modules described in \cref{sssec:linuxkernelmodules} and configure the \gls{adb}, the ramdisk has to be adapted to run a startup script. In order for the startup script to be executed at all, the selinux policy must be extended to include the startup service. This is done in \crefrange{lst:sepolicy1}{lst:sepolicy2}.
+\Crefrange{lst:app1}{lst:app2} prepare the client app described in \cref{sssec:imageprocessingapp} for pre-installation on the android.
+\Crefrange{lst:androidenv1}{lst:androidenv2} setup the environment and
+\cref{lst:androidmake} builds the android system.
+The result are two images called \emph{ramdisk.img} and \emph{system.img}.
+
+The modification of the ramdisk is done in the \crefrange{lst:ramdisk1}{lst:ramdisk2}. In \cref{lst:ramdiskextract} the ramdisk is extracted to a folder. The new \emph{init.rc} file, which contains the startup service, is loaded into the ramdisk folder in \cref{lst:ramdiskstartup}. The preparation for the partial reconfiguration is done in \cref{lst:ramdiskpr}. This folder is needed for the \gls{fpga} manager (see \cref{sssec:dynamicpartialreconfiguration}). \Cref{lst:ramdisk2} wraps the modified ramdisk. The result is a bootable image called \emph{uramdisk.img}.

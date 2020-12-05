@@ -1,3 +1,4 @@
+Tue do the kernel version upgrade as described in \cref{sssec:linuxkernel}, the code for the kernel modules has to be adapted. The code contained function calls that are obsolete in the newer version of the kernel and are therefore no longer supported.
 
 \subsubsubsection{Blake2b Driver}
 The blake2b device driver sits between the userspace application that desires to
@@ -15,23 +16,19 @@ The code is quite self explanatory and therefore not discussed in detail here.
 One caveat is that one has to call the function \emph{wmb} between subsequent
 reads or writes to the device.
 This function will impede the compiler to rearrange the calls during
-optimization and therefore guarantees that the reads and writes are executed in
+optimisation and therefore guarantees that the reads and writes are executed in
 specified order.
-\\\\
+
+One of the most important adjustments here is the registration of the interrupt. The interrupt number is no longer hard-coded, but is read from the devicetree using functions. The actual interrupt number (differs from the devicetree) under which the interrupt can be reached is generated automatically.
+
 \subsubsubsection{Image Filter Driver}
 The Image Filter device driver writes raw \gls{rgb} data that needs to be
 processed to the write register address of the programmed filter logic.
 The processing of the value is then triggered automatically.
 Afterwards the filter data is read from the read register address by the driver.
-The interface to the userspace application is implemented by writing and reading
-from a related \emph{.bin} file.
-The absolute path of this file has to be communicated to the device driver.
+The interface to the userspace application is implemented by reading from a related \emph{.bin} file. The absolute path of this file has to be communicated to the device driver. The result is then written to a new file called \emph{filtered.bin}.
 
-The communication with the \gls{pl} is discussed in section
-\ref{sssec:imageprocessingmodule}.
-The communication with the application is discussed in section
-\ref{sssec:imageprocessingapp}.
-The developed driver creates a device file \emph{/proc/simple\_filters}, which
-can be triggered by the user application.
-The driver code itself is available at\\
-\emph{<repo>/drivers/simple\_filters/simple\_filters.c}.
+The communication with the \gls{pl} is discussed in \cref{sssec:imageprocessingmodule}.
+The communication with the application is discussed in \cref{sssec:imageprocessingapp}.
+The driver creates a device file \emph{/proc/simple\_filters}, which can be triggered by the user application.
+The driver code is available at \emph{<repo>/drivers/simple\_filters/simple\_filters.c}.

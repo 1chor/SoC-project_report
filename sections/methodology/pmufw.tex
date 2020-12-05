@@ -1,0 +1,22 @@
+The generation steps for the \gls{pmufw} are the same as for the \gls{fsbl}. An application project for \gls{pmufw} is also created with the SDK.
+
+Proceed as follows to generate the \gls{pmufw}:
+\begin{lstlisting}[
+	language=Bash,
+	%caption={Building the PMUFW},
+	%label={lst:makepmufw},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+cd hardware_design
+
+# create PMUFW project
+make -f scripts/Makefile pmufw
+
+# If the project has already been created, run ...
+cd soc_project.sdk/pmufw/Release
+make
+\end{lstlisting}
+
+The compiled \gls{pmufw} will be available at \emph{soc_project.sdk/pmufw/Release/pmufw.elf}.

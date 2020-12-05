@@ -1,0 +1,32 @@
+When all the software components described above have been generated, the boot image can finally be created. For this purpose, a \gls{bif} file was created. It tells the bootgen tool in which destination the component should be in the boot image and what type it is. The content of the \gls{bif} file can be seen in \cref{lst:biffile}.
+\begin{lstlisting}[
+	language=Bash,
+	caption={BIF file for the boot image},
+	label={lst:biffile},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+the_ROM_image:
+{
+  [destination_cpu=a53-0, bootloader] fsbl.elf
+  [pmufw_image] pmufw.elf
+  [destination_device=pl] zcu102_wrapper.bit
+  [destination_cpu=a53-0, exception_level=el-3, trustzone] bl31.elf
+  [destination_cpu=a53-0, exception_level=el-2] u-boot.elf
+}
+\end{lstlisting}
+
+To finally generate the boot image, run the following command:
+\begin{lstlisting}[
+	language=Bash,
+	%caption={Generating boot image},
+	%label={lst:makebootimage},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+bootgen -arch zynqmp -image bootimage/zcu102.bif -w -o i bootimage/BOOT.BIN
+\end{lstlisting}
+
+The generated boot image will be available at \emph{bootimage/BOOT.BIN}.

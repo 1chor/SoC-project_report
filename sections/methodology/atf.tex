@@ -1,0 +1,19 @@
+Compared to the previous project \cite{oldrepo}, an ARM Trusted Firmware is required. This is due to the different architecture that the \glspl{fpga} use. ARM Trusted Firmware provides a reference implementation of secure world software for ARMv8-A, including a Secure Monitor executing at Exception Level 3 (EL3) and it implements various ARM interface standards.
+
+Xilinx provides a branch of the ARM Trusted Firmware that is designed for the most ARMv8-A models and hardware platforms \cite{atf}. Source release \emph{xilinx-v2018.1} was used.
+
+To build the ARM Trusted Firmware, the following lines need to be processed:
+\begin{lstlisting}[
+	language=Bash,
+	%caption={Building the ARM Trusted Firmware},
+	%label={lst:makeatf},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+# build
+cd arm-trusted-firmware
+make PLAT=zynqmp bl31
+\end{lstlisting}
+
+The compiled firmware will be available at \emph{build/release/bl31/bl31.elf}.

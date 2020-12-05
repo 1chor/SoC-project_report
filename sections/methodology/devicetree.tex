@@ -1,0 +1,30 @@
+The steps for the devicetree are similar to those for \gls{fsbl} and \gls{pmufw}, but require additional steps.
+
+First, a new devicetree application project is created with the SDK. Xilinx provides a devicetree repository \cite{devicetree} that is required for the application project. The source revision \emph{xilinx-v2018.1} was selected because all components use this tool version. The application project automatically searches the hardware design and adds all necessary files for the device tree.
+
+Since the reconfigurable region is not connected within the block design, but is connected to the exported signals in the wrapper file (see \cref{sssec:partialreconfigurationsetup}), not all of the information required for the reconfigurable modules is contained in the \gls{pl}-related \gls{dtsi} file. Therefore the \emph{pl.dtsi} file has to be adapted.
+
+Finally, the devicetree can be generated with the devicetree generator contained in the Linux kernel \cite{linuxkernel}.
+
+To complete these steps, the following commands must be run:
+\begin{lstlisting}[
+	language=Bash,
+	%caption={Compiling the devicetree},
+	%label={lst:makedevicetree},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+# create devicetree project
+cd hardware_design
+make -f scripts/Makefile dts
+
+# load pl.dtsi
+cp ../build-files/devicetree/pl.dtsi soc_project.sdk/device-tree/
+
+# compiling a devicetree blob
+make -f scripts/Makefile compile
+\end{lstlisting}
+
+\note{check formatting, need to be under listing}
+The compiled devicetree blob will be available at \emph{soc_project.sdk/device-tree/system-top.dtb}, but will be renamed to \emph{zynqmp-zcu102-rev1.0.dtb}.

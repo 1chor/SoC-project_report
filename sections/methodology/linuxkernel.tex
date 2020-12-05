@@ -1,60 +1,27 @@
-Digilent provides a branch of the linux kernel that is compatible with most of
-their boards, including the ZedBoard~\cite{DigilentLinux}.
-Source revision \emph{06b3889} was found to be the most recent to include
-android support.
+Mentor Embedded provides a branch of the Linux kernel that is compatible with the ZCU102 Evaluation Kit \cite{linuxkernel}.
+Source release \emph{release_android-8_xilinx-v2018.1} was used because it is compatible with the android revision. Compared to the previous project \cite{oldrepo} in which Linux kernel version $3.6$ was used, a newer kernel version ($4.4$) was used.
 
-To build linux from~\cite{DigilentLinux} for the ZedBoard with Android support,
+To build the Linux kernel from \cite{linuxkernel} for the ZCU102 with Android support,
 the following steps need to be followed:
-\begin{enumerate}
-	\item \emph{Fix the device tree} by copying the device tree from
-		\cite{DigilentReferenceDesign} to
-		\emph{<kernel>/arch/arm/boot/dts/digilent-zed.dts}
-	\item \emph{Setup build environment to use Xilinx tools} by setting
-		environment variables as seen in \Cref{lst:envsetup}
-	\item \emph{Generate default configuration for the ZedBoard} by running
-		\emph{make digilent\_zed\_defconfig}
-	\item \emph{Add Android and touchscreen related configurations} by running
-		\emph{make menuconfig}
-		\begin{enumerate}
-			\item Navigate to `Device Drivers' and enable `Staging Drivers'
-			\item Navigate to `Device Drivers' `Staging Drivers', `Android'
-				and enable all entries
-			\item Navigate to `Device drivers', `Input device support' and
-				enable `Touchscreens'
-			\item Navigate to `Device drivers', `Input device support',
-				`Touchscreens' and enable
-				\begin{itemize}
-					\item `Ilitek ILI210X based touchscreen'
-					\item `USB Touchscreen Driver'
-				\end{itemize}
-			\item Navigate to `Device drivers', `HID support', `Special HID
-				drivers' and enable `HID Multitouch panels'
-		\end{enumerate}
-	\item \emph{Build the kernel} by running \emph{make}
-	\item \emph{Build the device tree} by running \emph{./scripts/dtc/dtc -I dts
-		-O dtb -o devicetree.dtb arch/arm/boot/dts/digilent-zed.dts}
-\end{enumerate}
 \begin{lstlisting}[
 	language=Bash,
-	caption={Environment setup to build the linux kernel},
-	label={lst:envsetup},
+	%caption={Building the Linux kernel},
+	%label={lst:makelinuxkernel},
 	basicstyle=\small,
 	float=htbp,
 	floatplacement=htbp
 	]
-export CCOMPILER=arm-xilinx-linux-gnueabi-gcc
-export ARCH=arm
-export CROSS_COMPILE=arm-xilinx-linux-gnueabi-
-export PATH=$PATH:/opt/Xilinx/14.7/ISE_DS/EDK/gnu/arm/lin/bin/		
-\end{lstlisting}
-The compiled image will be available in \emph{arch/arm/boot/zImage}.
-To boot it requires a ramdisk, available from~\cite{DigilentReferenceDesign}.
-To have the linux kernel to load our kernel modules and start Android when the
-boot was successul, the ramdisk has to be adapted.
-The easiest way to do this is to make the startup script in
-\emph{etc/init.d/rcS} execute our own startup scripts from the SD card after
-everything else is done.
+# setup environment
+export COMPILER=aarch64-linux-gnu-gcc
+export ARCH=arm64
+export CROSS_COMPILE=aarch64-linux-gnu-	
 
-We created two startup scripts, one to load the kernel modules
-(\emph{<repo>/linux-files/startup.sh}) and one to start android
-(\emph{<repo>/linux-files/startup\_android.sh}).
+# load kernel config
+cd mpsoc-linux-xlnx
+make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- xilinx_zynqmp_android_defconfig
+
+# build
+make -j4
+\end{lstlisting}
+
+The compiled image will be available in \emph{arch/arm64/boot/Image}.

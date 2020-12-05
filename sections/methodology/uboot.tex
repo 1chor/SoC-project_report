@@ -1,0 +1,23 @@
+Mentor Embedded also provides a branch of the u-boot utility that is compatible for this setup \cite{uboot}. Source release \emph{release_android-8_xilinx-v2018.1} was also used here so that they are on the same version.
+
+Before the bootloader can be created, a fix for the \gls{pmufw} version check must be implemented. The \gls{pmufw} described in \cref{sssec:pmufw} generates the firmware with version $1.0$, but the u-boot utility checks for version $0.3$. Therefore the version control must be corrected.
+
+To build the u-boot utility and also apply the \gls{pmufw} version fix, the following lines need to be processed:
+\begin{lstlisting}[
+	language=Bash,
+	%caption={Building the u-boot utility},
+	%label={lst:makeuboot},
+	basicstyle=\small,
+	float=htbp,
+	floatplacement=htbp
+	]
+# apply PMUFW version fix
+cp build-files/u-boot/cpu.c mpsoc-u-boot-xlnx/arch/arm/cpu/armv8/zynqmp
+
+# load config and build
+cd mpsoc-u-boot-xlnx
+make CROSS_COMPILE=aarch64-linux-gnu- xilinx_zynqmp_zcu102_rev1_0_defconfig
+make CROSS_COMPILE=aarch64-linux-gnu-
+\end{lstlisting}
+
+The compiled bootloader will be available in the u-boot folder as \emph{u-boot.elf}.
