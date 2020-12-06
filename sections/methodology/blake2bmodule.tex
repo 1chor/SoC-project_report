@@ -12,8 +12,7 @@ It comes in two flavors:
 A hardware implementation was created by Benedikt Tutzer and Dinka Milovancev as
 part of the \emph{Digital Integrated Circuits} Laboratory at TU
 Wien~\cite{blake2hardware}.
-Even though we are working on a $32$-bit platform, we chose to implement
-Blake2B, since at hardware level we can chose what bit-width to use.
+Although a 32-bit platform is used, it was decided to implement Blake2B, as it is possible to choose which bit-width should be used at the hardware level.
 
 Since this IP core was already created in the previous project \cite{oldrepo}, the core is added to the system design as described in
 \Cref{ssec:zynqhardwaredesign} and given the address $0x88000000$. A size of

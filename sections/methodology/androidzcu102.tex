@@ -52,7 +52,7 @@ cp uramdisk.img ../../bootimage
 \end{lstlisting}
 
 In \crefrange{lst:androidret1}{lst:androidret2} the android source code is fetched.
-\Crefrange{lst:mali1}{lst:mali2} loads the MALI 400 userspace binaries provided by Xilinx \cite{mali400}. 
+\Crefrange{lst:mali1}{lst:mali2} load the MALI 400 userspace binaries provided by Xilinx \cite{mali400}. 
 In order to automatically load the kernel modules described in \cref{sssec:linuxkernelmodules} and configure the \gls{adb}, the ramdisk has to be adapted to run a startup script. In order for the startup script to be executed at all, the selinux policy must be extended to include the startup service. This is done in \crefrange{lst:sepolicy1}{lst:sepolicy2}.
 \Crefrange{lst:app1}{lst:app2} prepare the client app described in \cref{sssec:imageprocessingapp} for pre-installation on the android.
 \Crefrange{lst:androidenv1}{lst:androidenv2} setup the environment and

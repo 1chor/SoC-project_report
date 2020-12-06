@@ -17,9 +17,9 @@ The architecture is following the single responsibility principle, separating th
     \item Repository        - Data format
 \end{itemize}
 
-The Network Manager spawns a new thread and opens a connection to the server. Then requests new information using the \gls{rest} API (see section \ref{ssssec:server}). The received information is packed inside a JSON object (JavaScript Object Notation) and forwarded to the MsgProcessor. Where they are unpacked, compared and saved.
+The Network Manager spawns a new thread and opens a connection to the server. Then requests new information using the \gls{rest} API (see section \ref{ssssec:server}). The received information is packed inside a \gls{json} object and forwarded to the MsgProcessor. Where they are unpacked, compared and saved.
 
-Example JSON object:
+Example \gls{json} object:
 \begin{verbatim}
 {
     "Index": "SOC-LAB-IOT",
@@ -27,8 +27,8 @@ Example JSON object:
     "Version": "002",
     "Description": "",
     "Changelog": ["3.11.2018 Primary release", 
-                    "4.11.2018 Bug fixing", 
-                    "6.11.2018 added stuff"],
+                  "4.11.2018 Bug fixing", 
+                  "6.11.2018 added stuff"],
     "File": "filter_0_0_4.bin",
     "Date": "6.11.2018",
     "Checksum": "fdg851dfg654dfg6541dfg65514dfghdfg45534terg"
@@ -43,14 +43,14 @@ If there is a new version available, the Network Manager will download the new b
     \caption{\label{fig:gui} App user interface}
 \end{figure}
 
-To apply filters the app has to preprocess the image for the device driver to the following specification:
+To apply filters, the app must preprocess the image for the device driver according to the following specification:
 $32$ bit integer
 ALPHA | RED |GREEN | BLUE ($8$bit|$8$bit|$8$bit|$8$bit) e.g full opaque red would be (hex notation) $FF FF 00 00$. Every pixel will be read out and saved together to a new binary file. 
 The path to this file will be written to the device driver, soon after the filtered data will be read back into the UI from a new created file.
 
 \subsubsubsection{Root client script}\label{ssssec:clientscript}
-The main challenge of the Android application was communication with the \gls{fpga} hardware in the \gls{pl}. This problem could not be solved in the previous project \cite{oldrepo}. 
-In order to be able to access the FPGA hardware from the application, the app must be signed with a some platform keys. However, there was no access to these keys. The installation of the app as a system app was insufficient or also required some keys.
+The main challenge of the Android application was the communication with the \gls{fpga} hardware in the \gls{pl}. This problem could not be solved in the previous project \cite{oldrepo}. 
+In order to be able to access the FPGA hardware from the application, the app must be signed with some platform keys. However, there was no access to these keys. The installation of the app as a system app was insufficient or also required some keys.
 
 A workaround was found. Since the application has access to the external storage, which is a specific folder on the SD card (\emph{/storage/emulated/0/SoC}), the commands to be transmitted to the kernel modules have been written to a text file.
 
@@ -71,7 +71,7 @@ Finally, the files that are no longer needed are deleted so that no false trigge
 \medbreak
 
 \textbf{Control for blake2b hash function:}\\
-When the app has downloaded a new bitstream update, the hash function need to be calculated. Therefore a text file is created that contains the path to the new bitstream file. Before the bitstream can be passed to the kernel module, the command in \cref{lst:catbitstream} must be executed. This command opens the bitstream file and send it to a null device. If this step is not followed, the actual blake2b hash function will fail. This malfunction was only ascertained with binary files. 
+When the app has downloaded a new bitstream update, the hash function need to be calculated. Therefore a text file is created that contains the path to the new bitstream file. Before the bitstream can be passed to the kernel module, the command in \cref{lst:catbitstream} must be executed. This command opens the bitstream file and sends it to a null device. If this step is not followed, the actual blake2b hash function will fail. This malfunction was only ascertained with binary files. 
 \begin{lstlisting}[
 	language=Bash,
 	caption={Prepare bitstream for blake2b},
@@ -127,10 +127,10 @@ pip install flask-restful
 \end{lstlisting}
 
 Run the script at \emph{<repo>/server/run\_server.sh} to start the server. The host's IP address must be entered. The script shows all available IP addresses
-Open http://*your ip*:5000 to see if the server is reachable.
+Open http://<your ip>:5000 to see if the server is reachable.
 
 There are also some preconfigured repositories implemented in a file at \emph{<repo>/server/ressources/repository.py}.
-All files contained in a repository are located in the server' download folder. When a download is in progress, the server sends the file from this folder.
+All files contained in a repository are located in the server's download folder. When a download is in progress, the server sends the file from this folder.
 
 \subsubsubsection{Server API}\label{ssssec:serverapi}
 Insomnia, a free open source \gls{rest} client available for Mac, Windows and Linux, was used for API testing and server communication (see \cref{fig:insomnia}).
@@ -143,10 +143,6 @@ Insomnia, a free open source \gls{rest} client available for Mac, Windows and Li
 
 All commands of the server API are explained below.
 \medbreak
-
-%define command for table
-\newcommand{\specialcell}[2][c]{%
-  \begin{tabular}[#1]{@{}c@{}}#2\end{tabular}}
 
 \textbf{Get all information for repository <index>:}\\
 This command returns all information of a requested repository. If the command is successful, the response code is $200$ otherwise it is $404$.
@@ -163,7 +159,7 @@ This command returns all information of a requested repository. If the command i
 \end{table}
 
 \textbf{Create repository <index>:}\\
-This command creates a new repository with the passed JSON parameters. If the command is successful, the response code is $201$ otherwise it is $400$.
+This command creates a new repository with the passed \gls{json} parameters. If the command is successful, the response code is $201$ otherwise it is $400$.
 
 \begin{table}[htbp]
     \centering
@@ -191,7 +187,7 @@ JSON:
 \end{verbatim}
 
 \textbf{Update repository <index> or create it if not existing:}\\
-This command appends the passed JSON parameters to a repository or creates a new one if it does not exist. If the command changed the parameters of an existing repository, the response code is $200$, but if a new one was created, the response code is $201$.
+This command appends the passed \gls{json} parameters to a repository or creates a new one if it does not exist. If the command changed the parameters of an existing repository, the response code is $200$, but if a new one was created, the response code is $201$.
 
 \begin{table}[htbp]
     \centering

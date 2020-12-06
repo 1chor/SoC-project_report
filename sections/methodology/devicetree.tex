@@ -4,7 +4,7 @@ First, a new devicetree application project is created with the SDK. Xilinx prov
 
 Since the reconfigurable region is not connected within the block design, but is connected to the exported signals in the wrapper file (see \cref{sssec:partialreconfigurationsetup}), not all of the information required for the reconfigurable modules is contained in the \gls{pl}-related \gls{dtsi} file. Therefore the \emph{pl.dtsi} file has to be adapted.
 
-Finally, the devicetree can be generated with the devicetree generator contained in the Linux kernel \cite{linuxkernel}.
+Finally, the devicetree can be generated with the devicetree generator contained in the Linux kernel sources \cite{linuxkernel}.
 
 To complete these steps, the following commands must be run:
 \begin{lstlisting}[
