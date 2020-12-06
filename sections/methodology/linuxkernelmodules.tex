@@ -4,7 +4,7 @@ Tue do the kernel version upgrade as described in \cref{sssec:linuxkernel}, the 
 The blake2b device driver sits between the userspace application that desires to
 compute the hash of a file and the \gls{pl} implementation of Blake2B.\\
 The communication with the \gls{pl} was discussed in detail in
-\Cref{sssec:blake2bmodule}.\\
+\cref{sssec:blake2bmodule}.\\
 The interface to the userspace application is simple.
 The driver creates a device file \emph{/proc/blake2b}.
 The userspace application can then write a file path to that file.
