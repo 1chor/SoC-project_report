@@ -1,5 +1,20 @@
-The presented implementation is far from perfect.
-Issues faced during development that could not be fixed during the course of the
-project are presented in this section.
+Issues faced during development that could not be fixed during the project are presented in this section.
 
-\note{reword or remove}
+\subsection{Touchscreen display}
+The display of the touchscreen does not work in the current design. The issue with the touchscreen input of the previous project \cite{oldrepo} has been fixed with the newer Android version. The inputs on the touchscreen are automatically recognised without any adjustments.
+
+The Xilinx ZCU102 Evaluation Kit offers two graphical outputs (DisplayPort and \gls{hdmi}). The DisplayPort output is connected directly to the \gls{ps}. To use the \gls{hdmi} output, the hardware design must include the necessary components (e.g. the \gls{hdmi} transmitter subsystem or the video PHY controller).
+
+Since the touchscreen display only offers a \gls{hdmi} input, two approaches were followed.
+
+First, the hardware design was adapted in order to be able to use the \gls{hdmi} output.
+For this purpose, the \gls{trd} from \cite{TRDReferenceDesign} was used as a reference. Module 6 from \cite{TRDReferenceDesign} contains a sample design for \gls{hdmi}, in which all necessary components are included. The Linux drivers for the \gls{hdmi} components were created with the Xilinx \gls{hdmi} Linux out-of-tree modules from \cite{hdmi-modules}. 
+
+Unfortunately, it was not possible to integrate the Linux kernel modules into Android. The kernel modules always showed an error during the integration, which stated that the devicetree was not correct. In addition, it was not known how the display output in Android can be switched from DisplayPort to \gls{hdmi}.
+
+The second approach was to use a DisplayPort-to-\gls{hdmi} adapter. Unfortunately, it was also found that the touchscreen display was not working. Two different monitors and the touchscreen were tested, but neither of them worked with this adapter.
+
+Xilinx stated in \cite{AR67462} that DisplayPort-to-\gls{hdmi} adapters currently do not work out of the box and presented a list of tested and working monitors in \cite{AR68671}.
+
+Android will not boot if neither a display nor a monitor is connected or recognised.
+Unfortunately, it was therefore only possible to display the display output on a monitor via DisplayPort.

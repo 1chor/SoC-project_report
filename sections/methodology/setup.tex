@@ -51,6 +51,7 @@ To create this partition structure, the following command can be executed. All n
 sudo bootimage/mkSDcard.sh /dev/mmcblk0 populate
 # Use the path to your SD card instead of '/dev/mmcblk0'
 \end{lstlisting}
+\FloatBarrier
 
 Follow the steps below to set up the ZCU102:
 \begin{itemize}
@@ -76,13 +77,11 @@ position and Android will boot.
 After boot, Android will present itself on the display and show the launcher
 as seen in \Cref{fig:androiddisplay}.
 
-\note{replace with new Android screen on Display}
-
 \emph{NOTE:} The screen must be connected before boot, otherwise the Android
 \gls{gui} will not show.
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=1\textwidth]{sections/methodology/androiddisplay}
-    \caption{\label{fig:androiddisplay} Android launcher on the ZCU102 display}
+    \includegraphics[width=1\textwidth]{images/android-launcher.jpg}
+    \caption{\label{fig:androiddisplay} Android 8 launcher}
 \end{figure}

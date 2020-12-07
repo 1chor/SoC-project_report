@@ -1,5 +1,8 @@
 In this section, ideas for further projects and how to improve the current
 design are presented.
 
+\subsection{Display output}
+The hardware design for using \gls{hdmi} can be customised to use frame buffers. A good reference for this design can be found in \cite{framebufferdesign}. Then the Android source code would have to be adapted to route the display output to the \gls{hdmi} frame buffers in the \gls{pl} instead of the DisplayPort frame buffers currently in use. Then it would also be possible to use the \gls{hdmi} touchscreen and the desired tablet experience would be achieved.
+
 \subsection{Image Processing Hardware}
 Image or video processing filters, which on the one hand take up much more space on the \gls{fpga} and on the other hand have a much higher processing effort, would be a very suitable application for a partially reconfigurable \gls{iot} device. There are several cores in the Vivado IP Catalog that meet the requirements for efficient image and video processing. These cores use an \gls{axi} stream interface to connect to the rest of the fabric. In this laboratory project, these cores could not be used because no license was provided to generate a bitstream containing these cores.
