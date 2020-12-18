@@ -1,4 +1,4 @@
-To setup the hardware, one can either:
+To set up the hardware, one can either:
 \begin{itemize}
 	\item Build the design himself as described in the previous sections
 	\item Use the prebuilt files provided in \emph{<repo>/prebuilt}
@@ -25,7 +25,7 @@ Five partitions must be created and formatted on an SD card of at least $4GB$. T
         \item startup.sh: The script that loads the kernel modules
         \item modules/blake2b.ko: The kernel driver for the hasing device
         \item modules/blake2b.ko: The kernel driver for the image filters
-        \item Root\_Client.sh: The script that forwards the commandos from the app to the kernel drivers
+        \item Root\_Client.sh: The script that forwards the commands from the app to the kernel drivers
     \end{itemize}
     
     \item ROOT partition:
@@ -48,14 +48,14 @@ To create this partition structure, the following command can be executed. All n
 	float=htbp,
 	floatplacement=htbp
 	]
-sudo bootimage/mkSDcard.sh /dev/mmcblk0 populate
 # Use the path to your SD card instead of '/dev/mmcblk0'
+sudo bootimage/mkSDcard.sh /dev/mmcblk0 populate
 \end{lstlisting}
 \FloatBarrier
 
 Follow the steps below to set up the ZCU102:
 \begin{itemize}
-    \item Use default ZCU102 User Guide \cite{UG1182} as a reference for switches and connectors location
+    \item Use ZCU102 User Guide \cite{UG1182} as a reference for switches and connectors location
     \item Set boot mode of the board to "SD Boot"
     \item Insert SD card to the board
     \item Connect external monitor using DisplayPort. Please note that DP must be connected before board power-on

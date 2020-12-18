@@ -2,7 +2,7 @@ The steps for the devicetree are similar to those for \gls{fsbl} and \gls{pmufw}
 
 First, a new devicetree application project is created with the SDK. Xilinx provides a devicetree repository \cite{devicetree} that is required for the application project. The source revision \emph{xilinx-v2018.1} was selected because all components use this tool version. The application project automatically searches the hardware design and adds all necessary files for the device tree.
 
-Since the reconfigurable region is not connected within the block design, but is connected to the exported signals in the wrapper file (see \cref{sssec:partialreconfigurationsetup}), not all of the information required for the reconfigurable modules is contained in the \gls{pl}-related \gls{dtsi} file. Therefore the \emph{pl.dtsi} file has to be adapted.
+Since the reconfigurable region is not connected within the block design, but is connected to the exported signals in the wrapper file (see \cref{sssec:partialreconfigurationsetup}), not all of the information required for the reconfigurable modules are contained in the \gls{pl}-related \gls{dtsi} file. Therefore the \emph{pl.dtsi} file has to be adapted.
 
 Finally, the devicetree can be generated with the devicetree generator contained in the Linux kernel sources \cite{linuxkernel}.
 

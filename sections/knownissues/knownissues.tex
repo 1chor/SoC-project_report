@@ -8,7 +8,7 @@ The Xilinx ZCU102 Evaluation Kit offers two graphical outputs (DisplayPort and \
 Since the touchscreen display only offers a \gls{hdmi} input, two approaches were followed.
 
 First, the hardware design was adapted in order to be able to use the \gls{hdmi} output.
-For this purpose, the \gls{trd} from \cite{TRDReferenceDesign} was used as a reference. Module 6 from \cite{TRDReferenceDesign} contains a sample design for \gls{hdmi}, in which all necessary components are included. The Linux drivers for the \gls{hdmi} components were created with the Xilinx \gls{hdmi} Linux out-of-tree modules from \cite{hdmi-modules}. 
+For this purpose, the \gls{trd} from \cite{TRDReferenceDesign} was used as a reference. Module 6 from \cite{TRDReferenceDesign} contains a sample design for \gls{hdmi}, that includes all the necessary components. The Linux drivers for the \gls{hdmi} components were created with the Xilinx \gls{hdmi} Linux out-of-tree modules from \cite{hdmi-modules}. 
 
 Unfortunately, it was not possible to integrate the Linux kernel modules into Android. The kernel modules always showed an error during the integration, which stated that the devicetree was not correct. In addition, it was not known how the display output in Android can be switched from DisplayPort to \gls{hdmi}.
 

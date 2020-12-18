@@ -28,7 +28,7 @@ To achieve the best android experience, a touchscreen is attached via DisplayPor
 
 To automate the extensive build process, two scripts are available in the git
 repository.
-\emph{<repo>/bootimage/generate\_without\_android.sh} compiles the Linux kernel and the kernel modules, u-boot, the bitstreams, \gls{fsbl}, \gls{pmufw}, the device tree, the ARM Trusted Firmware and finally the boot image. To build android, the script \emph{<repo>/bootimage/generate\_including\_android.sh} can be executed.
+\emph{<repo>/bootimage/generate\_without\_android.sh} compiles the Linux kernel and the kernel modules, u-boot, the bitstreams, \gls{fsbl}, \gls{pmufw}, the devicetree, the ARM Trusted Firmware and finally the boot image. To build android, the script \emph{<repo>/bootimage/generate\_including\_android.sh} can be executed.
 
 Both scripts rely on makefiles of the underlying components they are building. This means that components that were not changed since the last build are not going to be recompiled. This saves build time during development.
 
